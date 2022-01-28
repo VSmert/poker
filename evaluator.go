@@ -1,16 +1,16 @@
 package poker
 
 import (
-	"fmt"
+	"errors"
 )
 
 var table *lookupTable
 
-func init() {
+func Initialize() {
 	table = newLookupTable()
 }
 
-func RankClass(rank int32) int32 {
+func RankClass(rank int32) (int32, error) {
 	targets := [...]int32{
 		maxStraightFlush,
 		maxFourOfAKind,
@@ -24,20 +24,24 @@ func RankClass(rank int32) int32 {
 	}
 
 	if rank < 0 {
-		panic(fmt.Sprintf("rank %d is less than zero", rank))
+		return -1, errors.New("rank is less than zero")
 	}
 
 	for _, target := range targets {
 		if rank <= target {
-			return maxToRankClass[target]
+			return maxToRankClass[target], nil
 		}
 	}
 
-	panic(fmt.Sprintf("rank %d is unknown", rank))
+	return -1, errors.New("rank is unknown")
 }
 
-func RankString(rank int32) string {
-	return rankClassToString[RankClass(rank)]
+func RankString(rank int32) (string, error) {
+	rankClass, err := RankClass(rank)
+	if err != nil{
+		return "", err
+	}
+	return rankClassToString[rankClass], nil
 }
 
 func Evaluate(cards []Card) int32 {

@@ -25,7 +25,8 @@ func TestRankString(t *testing.T) {
 	}
 
 	for rank := range data {
-		assert.Equal(t, data[rank], RankString(rank))
+		rankstr, _ := RankString(rank)
+		assert.Equal(t, data[rank], rankstr)
 	}
 }
 
